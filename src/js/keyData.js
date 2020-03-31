@@ -450,10 +450,6 @@ const keyCodes = [
     value: 'ctrl',
   },
   {
-    id: 'Win',
-    value: 'win',
-  },
-  {
     id: 'AltLeft',
     value: 'alt',
   },
