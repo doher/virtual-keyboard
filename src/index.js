@@ -1,66 +1,42 @@
-import render from './js/keyboard';
+import Keyboard from './js/Keyboard';
+import Layout from './js/Layout';
 import './styles/base.scss';
 
-const wrapper = document.createElement('div');
-const keyboard = document.createElement('div');
+const layout = new Layout();
+const keyboard = new Keyboard();
 const textarea = document.createElement('textarea');
 
-function isActive(element) {
-  if (element.classList.contains('active')) {
-    element.classList.remove('active');
-  } else {
-    element.classList.add('active');
-  }
-}
-
-function addActiveState(event) {
-  const buttons = document.querySelectorAll('.button');
-  const { code } = event;
-
-  buttons.forEach((btn) => {
-    if (btn.classList.contains(code) && !btn.classList.contains('active')) {
-      btn.classList.add('active');
-
-      textarea.value += btn.querySelector('span').textContent;
-    }
-  });
-}
-
-function removeActiveState(event) {
-  const buttons = document.querySelectorAll('.button');
-  const { code } = event;
-
-  buttons.forEach((btn) => {
-    if (btn.classList.contains(code)) {
-      btn.classList.remove('active');
-    }
-  });
-}
+keyboard.createButton();
+textarea.classList.add('textarea');
 
 function changeActiveState(event) {
+  const { code } = event;
+  const eventType = event.type;
   const element = event.target;
 
-  if (element.tagName === 'SPAN') {
-    const parent = element.parentElement;
+  console.log(element);
 
-    isActive(parent);
-  }
+  document.querySelectorAll('.button').forEach((btn) => {
+    if (btn.classList.contains(code)) {
+      if (eventType === 'keydown' && !btn.classList.contains('active')) {
+        btn.classList.add('active');
+      } else if (eventType === 'keyup') {
+        btn.classList.remove('active');
+      }
+    }
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  textarea.classList.add('textarea');
-  wrapper.classList.add('wrapper');
-  keyboard.classList.add('keyboard');
-
-  wrapper.append(textarea);
-  wrapper.append(keyboard);
-  document.body.append(wrapper);
-
-  render('.keyboard');
+  document.body.append(layout.init());
+  layout.addSection(textarea);
+  layout.addSection(keyboard.init());
 });
-document.addEventListener('mousedown', (event) => (changeActiveState(event)));
-document.addEventListener('mouseup', (event) => (changeActiveState(event)));
 document.addEventListener('keydown', (event) => {
-  addActiveState(event);
+  event.preventDefault();
+  changeActiveState(event);
 });
-document.addEventListener('keyup', (event) => (removeActiveState(event)));
+document.addEventListener('keyup', (event) => {
+  event.preventDefault();
+  changeActiveState(event);
+});

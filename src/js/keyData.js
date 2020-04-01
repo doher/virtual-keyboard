@@ -3,7 +3,7 @@ const keyCodes = [
     id: 'Backquote',
     en: {
       value: '`',
-      leftShift: '~',
+      shift: '~',
     },
     ru: {
       value: 'ё',
@@ -13,108 +13,110 @@ const keyCodes = [
     id: 'Digit1',
     value: '1',
     en: {
-      leftShift: '!',
+      shift: '!',
     },
   },
   {
     id: 'Digit2',
     value: '2',
     en: {
-      leftShift: '@',
+      shift: '@',
     },
     ru: {
-      leftShift: '"',
+      shift: '"',
     },
   },
   {
     id: 'Digit3',
     value: '3',
     en: {
-      leftShift: '#',
+      shift: '#',
     },
     ru: {
-      leftShift: '№',
+      shift: '№',
     },
   },
   {
     id: 'Digit4',
     value: '4',
     en: {
-      leftShift: '$',
+      shift: '$',
     },
     ru: {
-      leftShift: ';',
+      shift: ';',
     },
   },
   {
     id: 'Digit5',
     value: '5',
     en: {
-      leftShift: '%',
+      shift: '%',
     },
   },
   {
     id: 'Digit6',
     value: '6',
     en: {
-      leftShift: '^',
+      shift: '^',
     },
     ru: {
-      leftShift: ':',
+      shift: ':',
     },
   },
   {
     id: 'Digit7',
     value: '7',
     en: {
-      leftShift: '&',
+      shift: '&',
     },
     ru: {
-      leftShift: '?',
+      shift: '?',
     },
   },
   {
     id: 'Digit8',
     value: '8',
     en: {
-      leftShift: '*',
+      shift: '*',
     },
   },
   {
     id: 'Digit9',
     value: '9',
     en: {
-      leftShift: '(',
+      shift: '(',
     },
   },
   {
     id: 'Digit0',
     value: '0',
     en: {
-      leftShift: ')',
+      shift: ')',
     },
   },
   {
     id: 'Minus',
     value: '-',
     en: {
-      leftShift: '_',
+      shift: '_',
     },
   },
   {
     id: 'Equal',
     value: '=',
     en: {
-      leftShift: '+',
+      shift: '+',
     },
   },
   {
     id: 'Backspace',
     value: 'backspace',
+    spec: true,
   },
   {
     id: 'Tab',
     value: 'tab',
+    spec: true,
   },
   {
     id: 'KeyQ',
@@ -210,7 +212,7 @@ const keyCodes = [
     id: 'BracketLeft',
     en: {
       value: '[',
-      leftShift: '{',
+      shift: '{',
     },
     ru: {
       value: 'х',
@@ -220,7 +222,7 @@ const keyCodes = [
     id: 'BracketRight',
     en: {
       value: ']',
-      leftShift: '}',
+      shift: '}',
     },
     ru: {
       value: 'ъ',
@@ -229,10 +231,12 @@ const keyCodes = [
   {
     id: 'Delete',
     value: 'del',
+    spec: true,
   },
   {
     id: 'CapsLock',
     value: 'caps lock',
+    spec: true,
   },
   {
     id: 'KeyA',
@@ -319,7 +323,7 @@ const keyCodes = [
     id: 'Semicolon',
     en: {
       value: ';',
-      leftShift: ':',
+      shift: ':',
     },
     ru: {
       value: 'д',
@@ -329,7 +333,7 @@ const keyCodes = [
     id: 'Quote',
     en: {
       value: '\'',
-      leftShift: '"',
+      shift: '"',
     },
     ru: {
       value: 'э',
@@ -338,10 +342,12 @@ const keyCodes = [
   {
     id: 'Enter',
     value: 'enter',
+    spec: true,
   },
   {
     id: 'ShiftLeft',
     value: 'shift',
+    spec: true,
   },
   {
     id: 'KeyZ',
@@ -410,7 +416,7 @@ const keyCodes = [
     id: 'Comma',
     en: {
       value: ',',
-      leftShift: '<',
+      shift: '<',
     },
     ru: {
       value: 'б',
@@ -420,7 +426,7 @@ const keyCodes = [
     id: 'Period',
     en: {
       value: '.',
-      leftShift: '>',
+      shift: '>',
     },
     ru: {
       value: 'ю',
@@ -430,52 +436,62 @@ const keyCodes = [
     id: 'Slash',
     en: {
       value: '/',
-      leftShift: '?',
+      shift: '?',
     },
     ru: {
       value: '.',
-      leftShift: ',',
+      shift: ',',
     },
   },
   {
     id: 'ArrowUp',
     value: '&#8593;',
+    spec: true,
   },
   {
     id: 'ShiftRight',
     value: 'shift',
+    spec: true,
   },
   {
     id: 'ControlLeft',
     value: 'ctrl',
+    spec: true,
   },
   {
     id: 'AltLeft',
     value: 'alt',
+    spec: true,
   },
   {
     id: 'Space',
     value: ' ',
+    spec: true,
   },
   {
     id: 'AltRight',
     value: 'alt',
+    spec: true,
   },
   {
     id: 'ControlRight',
     value: 'ctrl',
+    spec: true,
   },
   {
     id: 'ArrowLeft',
     value: '&#8592;',
+    spec: true,
   },
   {
     id: 'ArrowDown',
     value: '&#8595;',
+    spec: true,
   },
   {
     id: 'ArrowRight',
     value: '&#8594;',
+    spec: true,
   },
 ];
 
