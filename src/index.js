@@ -9,17 +9,50 @@ const textarea = document.createElement('textarea');
 keyboard.createButton();
 textarea.classList.add('textarea');
 
+function putChar(char) {
+  switch (char) {
+    case 'ctrl':
+    case 'alt':
+    case 'backspace':
+    case 'del':
+    case 'tab':
+      textarea.value += '';
+      break;
+
+    case 'caps lock':
+      keyboard.pressCapsLock();
+      layout.refresh('#keyboard', keyboard.init());
+      break;
+
+    case 'enter':
+      textarea.value += '\n';
+      break;
+
+    case 'shift':
+      keyboard.pressShift();
+      layout.refresh('#keyboard', keyboard.init());
+      break;
+
+    default:
+      textarea.value += char;
+      break;
+  }
+}
+
 function changeActiveState(event) {
+  event.preventDefault();
+
   const { code } = event;
   const eventType = event.type;
-  const element = event.target;
+  const buttons = document.querySelectorAll('.button');
 
-  console.log(element);
+  buttons.forEach((btn) => {
+    const char = btn.querySelector('span').textContent;
 
-  document.querySelectorAll('.button').forEach((btn) => {
     if (btn.classList.contains(code)) {
       if (eventType === 'keydown' && !btn.classList.contains('active')) {
         btn.classList.add('active');
+        putChar(char);
       } else if (eventType === 'keyup') {
         btn.classList.remove('active');
       }
@@ -33,10 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
   layout.addSection(keyboard.init());
 });
 document.addEventListener('keydown', (event) => {
-  event.preventDefault();
   changeActiveState(event);
 });
 document.addEventListener('keyup', (event) => {
-  event.preventDefault();
   changeActiveState(event);
 });
