@@ -6,35 +6,38 @@ const layout = new Layout();
 const keyboard = new Keyboard();
 const textarea = document.createElement('textarea');
 
-keyboard.createButton();
 textarea.classList.add('textarea');
 
-function putChar(char) {
-  switch (char) {
+function pressSpecialButton(button, option) {
+  const { isCapsLock } = option;
+  switch (button) {
+    case 'caps lock':
+      keyboard.buttons = { caps: isCapsLock };
+      break;
+
+    default:
+      break;
+  }
+}
+
+function pressButton(button) {
+  switch (button) {
     case 'ctrl':
     case 'alt':
     case 'backspace':
     case 'del':
     case 'tab':
-      textarea.value += '';
-      break;
-
+    case 'shift':
     case 'caps lock':
-      keyboard.pressCapsLock();
-      layout.refresh('#keyboard', keyboard.init());
+      textarea.value += '';
       break;
 
     case 'enter':
       textarea.value += '\n';
       break;
 
-    case 'shift':
-      keyboard.pressShift();
-      layout.refresh('#keyboard', keyboard.init());
-      break;
-
     default:
-      textarea.value += char;
+      textarea.value += button;
       break;
   }
 }
@@ -47,23 +50,38 @@ function changeActiveState(event) {
   const buttons = document.querySelectorAll('.button');
 
   buttons.forEach((btn) => {
-    const char = btn.querySelector('span').textContent;
+    const content = btn.querySelector('span').textContent;
 
     if (btn.classList.contains(code)) {
-      if (eventType === 'keydown' && !btn.classList.contains('active')) {
-        btn.classList.add('active');
-        putChar(char);
-      } else if (eventType === 'keyup') {
-        btn.classList.remove('active');
+      switch (eventType) {
+        case 'keydown':
+          pressButton(content);
+
+          if (!btn.classList.contains('active')) {
+            btn.classList.add('active');
+            pressSpecialButton(content, { isCapsLock: !keyboard.isCapsLock });
+          }
+          break;
+
+        case 'keyup':
+          if (!(keyboard.isCapsLock && btn.classList.contains('CapsLock'))) {
+            btn.classList.remove('active');
+          }
+
+          keyboard.isCapsLock = !keyboard.isCapsLock;
+          break;
+
+        default:
+          break;
       }
     }
   });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.body.append(layout.init());
+  document.body.append(layout.render());
   layout.addSection(textarea);
-  layout.addSection(keyboard.init());
+  layout.addSection(keyboard.render());
 });
 document.addEventListener('keydown', (event) => {
   changeActiveState(event);

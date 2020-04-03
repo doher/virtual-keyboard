@@ -3,22 +3,15 @@ class Layout {
     this.wrapper = null;
   }
 
-  init() {
-    this.wrapper = document.createElement('div');
-    this.wrapper.classList.add('wrapper');
-
-    return this.wrapper;
-  }
-
   addSection(section) {
     this.wrapper.append(section);
   }
 
-  refresh(selector, section) {
-    const element = this.wrapper.querySelector(selector);
+  render() {
+    this.wrapper = document.createElement('div');
+    this.wrapper.classList.add('wrapper');
 
-    element.remove();
-    this.addSection(section);
+    return this.wrapper;
   }
 }
 

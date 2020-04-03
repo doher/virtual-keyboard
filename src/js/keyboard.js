@@ -2,7 +2,6 @@ import keyCodes from './keyData';
 
 class Keyboard {
   constructor(id = 'keyboard', lang = 'en', caps = false, shift = false) {
-    this.button = null;
     this.main = null;
     this.id = id;
     this.lang = lang;
@@ -10,25 +9,23 @@ class Keyboard {
     this.shift = shift;
   }
 
-  createButton() {
-    this.button = (code) => {
-      let buttonName = code.value;
+  changeLanguage() {
+    this.lang = this.lang === 'en' ? 'ru' : 'en';
+  }
 
-      if (!code.value) {
-        buttonName = code[this.lang].value;
-      }
+  get isCapsLock() {
+    return this.caps;
+  }
 
-      if (!code.spec) {
-        if (this.caps) {
-          buttonName = buttonName.toUpperCase();
-        }
+  set isCapsLock(caps) {
+    this.caps = caps;
 
-        if (this.shift) {
-          buttonName = code[this.lang]
-            ? (code[this.lang].shift || buttonName.toUpperCase())
-            : (code.en.shift || buttonName.toUpperCase());
-        }
-      }
+    return this.caps;
+  }
+
+  get buttons() {
+    const button = (code) => {
+      const buttonName = code.value || code[this.lang].value;
 
       return (`
         <div class="${code.id} button">
@@ -36,26 +33,34 @@ class Keyboard {
         </div>
       `);
     };
+    const buttons = keyCodes.map(button).join('');
+
+    return buttons;
   }
 
-  changeLanguage() {
-    this.lang = this.lang === 'en' ? 'ru' : 'en';
+  set buttons(option) {
+    const { caps } = option;
+    const buttons = document.querySelectorAll('.button');
+
+    buttons.forEach((btn, index) => {
+      const button = btn.querySelector('span');
+
+      if (!keyCodes[index].spec) {
+        let buttonName = keyCodes[index].value || keyCodes[index][this.lang].value;
+
+        if (caps) {
+          buttonName = buttonName.toUpperCase();
+        }
+
+        button.textContent = buttonName;
+      }
+    });
   }
 
-  pressShift() {
-    this.shift = !this.shift;
-  }
-
-  pressCapsLock() {
-    this.caps = !this.caps;
-  }
-
-  init() {
-    const html = keyCodes.map(this.button).join('');
-
+  render() {
     this.main = document.createElement('div');
     this.main.id = this.id;
-    this.main.innerHTML = html;
+    this.main.innerHTML = this.buttons;
 
     return this.main;
   }
