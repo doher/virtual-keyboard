@@ -13,14 +13,28 @@ class Keyboard {
     this.lang = this.lang === 'en' ? 'ru' : 'en';
   }
 
+  get language() {
+    return this.lang;
+  }
+
+  set language(lang) {
+    this.lang = lang;
+  }
+
   get isCapsLock() {
     return this.caps;
   }
 
   set isCapsLock(caps) {
     this.caps = caps;
+  }
 
-    return this.caps;
+  get isShift() {
+    return this.shift;
+  }
+
+  set isShift(shift) {
+    this.shift = shift;
   }
 
   get buttons() {
@@ -39,7 +53,7 @@ class Keyboard {
   }
 
   set buttons(option) {
-    const { caps } = option;
+    const { caps, shift } = option;
     const buttons = document.querySelectorAll('.button');
 
     buttons.forEach((btn, index) => {
@@ -50,6 +64,12 @@ class Keyboard {
 
         if (caps) {
           buttonName = buttonName.toUpperCase();
+        }
+
+        if (shift) {
+          buttonName = keyCodes[index][this.lang]
+            ? (keyCodes[index][this.lang].shift || buttonName)
+            : (keyCodes[index].en.shift || buttonName);
         }
 
         button.textContent = buttonName;

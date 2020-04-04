@@ -5,6 +5,7 @@ import './styles/base.scss';
 const layout = new Layout();
 const keyboard = new Keyboard();
 const textarea = document.createElement('textarea');
+const pressed = new Set();
 
 textarea.classList.add('textarea');
 
@@ -15,13 +16,16 @@ function pressButton(button) {
     case 'backspace':
     case 'del':
     case 'tab':
-    case 'shift':
       textarea.value += '';
       break;
 
     case 'caps lock':
       keyboard.isCapsLock = !keyboard.isCapsLock;
-      keyboard.buttons = { caps: keyboard.isCapsLock };
+      keyboard.buttons = { caps: keyboard.isCapsLock, shift: keyboard.isShift };
+      break;
+
+    case 'shift':
+      keyboard.buttons = { caps: !keyboard.isCapsLock, shift: !keyboard.isShift };
       break;
 
     case 'enter':
@@ -34,6 +38,22 @@ function pressButton(button) {
   }
 }
 
+function changeLanguage(event, ...codes) {
+  pressed.add(event.code);
+
+  for (let i = 0; i < codes.length; i += 1) {
+    const code = codes[i];
+
+    if (!pressed.has(code)) {
+      return;
+    }
+  }
+
+  pressed.clear();
+  keyboard.changeLanguage();
+  keyboard.buttons = { caps: keyboard.isCapsLock, shift: keyboard.isShift };
+}
+
 function changeActiveState(event) {
   event.preventDefault();
 
@@ -43,14 +63,16 @@ function changeActiveState(event) {
 
   buttons.forEach((btn) => {
     const content = btn.querySelector('span').textContent;
+    const isCapsLock = btn.classList.contains('CapsLock');
 
     if (btn.classList.contains(code)) {
       switch (eventType) {
         case 'keydown':
-          if (!(repeat && btn.classList.contains('CapsLock'))) {
+          if (!(repeat && isCapsLock)) {
             pressButton(content);
-            console.log('repeat');
           }
+
+          console.log('keydown', code);
 
           if (!btn.classList.contains('active')) {
             btn.classList.add('active');
@@ -60,6 +82,10 @@ function changeActiveState(event) {
         case 'keyup':
           if (!(keyboard.isCapsLock && btn.classList.contains('CapsLock'))) {
             btn.classList.remove('active');
+          }
+
+          if (code === 'ShiftLeft' || code === 'ShiftRight') {
+            keyboard.buttons = { caps: keyboard.isCapsLock, shift: keyboard.isShift };
           }
           break;
 
@@ -77,7 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 document.addEventListener('keydown', (event) => {
   changeActiveState(event);
+  changeLanguage(event, 'ShiftLeft', 'AltLeft');
 });
 document.addEventListener('keyup', (event) => {
   changeActiveState(event);
+  pressed.delete(event.code);
 });
