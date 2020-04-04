@@ -8,18 +8,6 @@ const textarea = document.createElement('textarea');
 
 textarea.classList.add('textarea');
 
-function pressSpecialButton(button, option) {
-  const { isCapsLock } = option;
-  switch (button) {
-    case 'caps lock':
-      keyboard.buttons = { caps: isCapsLock };
-      break;
-
-    default:
-      break;
-  }
-}
-
 function pressButton(button) {
   switch (button) {
     case 'ctrl':
@@ -28,8 +16,12 @@ function pressButton(button) {
     case 'del':
     case 'tab':
     case 'shift':
-    case 'caps lock':
       textarea.value += '';
+      break;
+
+    case 'caps lock':
+      keyboard.isCapsLock = !keyboard.isCapsLock;
+      keyboard.buttons = { caps: keyboard.isCapsLock };
       break;
 
     case 'enter':
@@ -45,7 +37,7 @@ function pressButton(button) {
 function changeActiveState(event) {
   event.preventDefault();
 
-  const { code } = event;
+  const { code, repeat } = event;
   const eventType = event.type;
   const buttons = document.querySelectorAll('.button');
 
@@ -55,11 +47,13 @@ function changeActiveState(event) {
     if (btn.classList.contains(code)) {
       switch (eventType) {
         case 'keydown':
-          pressButton(content);
+          if (!(repeat && btn.classList.contains('CapsLock'))) {
+            pressButton(content);
+            console.log('repeat');
+          }
 
           if (!btn.classList.contains('active')) {
             btn.classList.add('active');
-            pressSpecialButton(content, { isCapsLock: !keyboard.isCapsLock });
           }
           break;
 
@@ -67,8 +61,6 @@ function changeActiveState(event) {
           if (!(keyboard.isCapsLock && btn.classList.contains('CapsLock'))) {
             btn.classList.remove('active');
           }
-
-          keyboard.isCapsLock = !keyboard.isCapsLock;
           break;
 
         default:
