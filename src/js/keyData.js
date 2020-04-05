@@ -350,6 +350,16 @@ const keyCodes = [
     spec: true,
   },
   {
+    id: 'Backslash',
+    value: '\\',
+    en: {
+      shift: '|',
+    },
+    ru: {
+      shift: '/',
+    },
+  },
+  {
     id: 'KeyZ',
     en: {
       value: 'z',

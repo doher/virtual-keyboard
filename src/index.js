@@ -9,6 +9,16 @@ const pressed = new Set();
 
 textarea.classList.add('textarea');
 
+function typeText(button) {
+  const position = textarea.selectionStart;
+  const text = textarea.value.split('');
+
+  text.splice(position, 0, button);
+  textarea.value = text.join('');
+  textarea.selectionStart = position + 1;
+  textarea.selectionEnd = position + 1;
+}
+
 function pressButton(button) {
   switch (button) {
     case 'ctrl':
@@ -16,7 +26,7 @@ function pressButton(button) {
     case 'backspace':
     case 'del':
     case 'tab':
-      textarea.value += '';
+      typeText('');
       break;
 
     case 'caps lock':
@@ -29,11 +39,11 @@ function pressButton(button) {
       break;
 
     case 'enter':
-      textarea.value += '\n';
+      typeText('\n');
       break;
 
     default:
-      textarea.value += button;
+      typeText(button);
       break;
   }
 }
@@ -54,7 +64,7 @@ function changeLanguage(event, ...codes) {
   keyboard.buttons = { caps: keyboard.isCapsLock, shift: keyboard.isShift };
 }
 
-function changeActiveState(event) {
+function toggleActiveState(event) {
   event.preventDefault();
 
   const { code, repeat } = event;
@@ -71,8 +81,6 @@ function changeActiveState(event) {
           if (!(repeat && isCapsLock)) {
             pressButton(content);
           }
-
-          console.log('keydown', code);
 
           if (!btn.classList.contains('active')) {
             btn.classList.add('active');
@@ -102,10 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
   layout.addSection(keyboard.render());
 });
 document.addEventListener('keydown', (event) => {
-  changeActiveState(event);
+  toggleActiveState(event);
   changeLanguage(event, 'ShiftLeft', 'AltLeft');
 });
 document.addEventListener('keyup', (event) => {
-  changeActiveState(event);
+  toggleActiveState(event);
   pressed.delete(event.code);
 });
