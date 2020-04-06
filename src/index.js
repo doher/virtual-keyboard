@@ -162,8 +162,8 @@ function toggleActiveStateByMouse(event) {
           shiftLeftElement.classList.add('active');
           shiftRightElement.classList.add('active');
         } else if (isAlt) {
-          altLeftElement.classList.add('active');
-          altRightElement.classList.add('active');
+          altLeftElement.classList.toggle('active');
+          altRightElement.classList.toggle('active');
         } else {
           parentElement.classList.add('active');
         }
