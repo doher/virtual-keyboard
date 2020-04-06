@@ -159,8 +159,8 @@ function toggleActiveStateByMouse(event) {
 
         if (isShift) {
           keyboard.isShift = !keyboard.isShift;
-          shiftLeftElement.classList.add('active');
-          shiftRightElement.classList.add('active');
+          shiftLeftElement.classList.toggle('active');
+          shiftRightElement.classList.toggle('active');
         } else if (isAlt) {
           altLeftElement.classList.toggle('active');
           altRightElement.classList.toggle('active');
