@@ -8,6 +8,7 @@ const textarea = document.createElement('textarea');
 const pressed = new Set();
 
 textarea.classList.add('textarea');
+keyboard.language = localStorage.getItem('language') || 'en';
 
 function typeText(button) {
   const position = textarea.selectionStart;
@@ -19,14 +20,45 @@ function typeText(button) {
   textarea.selectionEnd = position + 1;
 }
 
+function deleteText(button) {
+  const position = textarea.selectionStart;
+  const text = textarea.value.split('');
+
+  switch (button) {
+    case 'backspace':
+      if (position !== 0) {
+        text.splice(position - 1, 1);
+        textarea.value = text.join('');
+        textarea.selectionStart = position - 1;
+        textarea.selectionEnd = position - 1;
+      }
+      break;
+
+    case 'del':
+      if (position !== text.length) {
+        text.splice(position, 1);
+        textarea.value = text.join('');
+        textarea.selectionStart = position;
+        textarea.selectionEnd = position;
+      }
+      break;
+
+    default:
+      break;
+  }
+}
+
 function pressButton(button) {
+  textarea.focus();
+
   switch (button) {
     case 'ctrl':
     case 'alt':
+      break;
+
     case 'backspace':
     case 'del':
-    case 'tab':
-      typeText('');
+      deleteText(button);
       break;
 
     case 'caps lock':
@@ -40,6 +72,10 @@ function pressButton(button) {
 
     case 'enter':
       typeText('\n');
+      break;
+
+    case 'tab':
+      typeText('\t');
       break;
 
     default:
@@ -64,11 +100,10 @@ function changeLanguage(event, ...codes) {
   keyboard.buttons = { caps: keyboard.isCapsLock, shift: keyboard.isShift };
 }
 
-function toggleActiveState(event) {
+function toggleActiveStateByKey(event) {
   event.preventDefault();
 
-  const { code, repeat } = event;
-  const eventType = event.type;
+  const { code, type, repeat } = event;
   const buttons = document.querySelectorAll('.button');
 
   buttons.forEach((btn) => {
@@ -76,7 +111,7 @@ function toggleActiveState(event) {
     const isCapsLock = btn.classList.contains('CapsLock');
 
     if (btn.classList.contains(code)) {
-      switch (eventType) {
+      switch (type) {
         case 'keydown':
           if (!(repeat && isCapsLock)) {
             pressButton(content);
@@ -104,16 +139,116 @@ function toggleActiveState(event) {
   });
 }
 
+function toggleActiveStateByMouse(event) {
+  const { type, target } = event;
+
+  if (target.tagName === 'SPAN') {
+    const { parentElement, textContent } = target;
+    const isShift = parentElement.classList.contains('ShiftLeft')
+      || parentElement.classList.contains('ShiftRight');
+    const isAlt = parentElement.classList.contains('AltLeft')
+      || parentElement.classList.contains('AltRight');
+    const shiftLeftElement = document.querySelector('.ShiftLeft');
+    const shiftRightElement = document.querySelector('.ShiftRight');
+    const altLeftElement = document.querySelector('.AltLeft');
+    const altRightElement = document.querySelector('.AltRight');
+
+    switch (type) {
+      case 'mousedown':
+        pressButton(textContent);
+
+        if (isShift) {
+          keyboard.isShift = !keyboard.isShift;
+          shiftLeftElement.classList.add('active');
+          shiftRightElement.classList.add('active');
+        } else if (isAlt) {
+          altLeftElement.classList.add('active');
+          altRightElement.classList.add('active');
+        } else {
+          parentElement.classList.add('active');
+        }
+        break;
+
+      case 'mouseup': {
+        if (!((keyboard.isCapsLock && parentElement.classList.contains('CapsLock'))
+          || (isShift && keyboard.isShift) || isAlt)) {
+          parentElement.classList.remove('active');
+        }
+
+        if (isShift) {
+          if (keyboard.isShift) {
+            keyboard.buttons = { caps: !keyboard.isCapsLock, shift: keyboard.isShift };
+          } else {
+            keyboard.buttons = { caps: keyboard.isCapsLock, shift: keyboard.isShift };
+          }
+        }
+
+        if (shiftLeftElement.classList.contains('active') || shiftRightElement.classList.contains('active')) {
+          if (!isShift) {
+            shiftLeftElement.classList.remove('active');
+            shiftRightElement.classList.remove('active');
+            keyboard.isShift = !keyboard.isShift;
+            keyboard.buttons = { caps: keyboard.isCapsLock, shift: keyboard.isShift };
+          }
+
+          if (parentElement.classList.contains('AltLeft') || parentElement.classList.contains('AltRight')) {
+            keyboard.changeLanguage();
+            keyboard.buttons = { caps: keyboard.isCapsLock, shift: keyboard.isShift };
+            altLeftElement.classList.remove('active');
+            altRightElement.classList.remove('active');
+          }
+        }
+
+        if (altLeftElement.classList.contains('active') || altRightElement.classList.contains('active')) {
+          if (!isAlt) {
+            altLeftElement.classList.remove('active');
+            altRightElement.classList.remove('active');
+          }
+
+          if (parentElement.classList.contains('ShiftLeft') || parentElement.classList.contains('ShiftRight')) {
+            keyboard.changeLanguage();
+            shiftLeftElement.classList.remove('active');
+            shiftRightElement.classList.remove('active');
+            keyboard.isShift = !keyboard.isShift;
+            keyboard.buttons = { caps: keyboard.isCapsLock, shift: keyboard.isShift };
+          }
+        }
+
+        break;
+      }
+
+      case 'mouseout':
+        if (!((keyboard.isCapsLock && parentElement.classList.contains('CapsLock'))
+          || (isShift && keyboard.isShift) || isAlt)) {
+          parentElement.classList.remove('active');
+        }
+        break;
+
+      default:
+        break;
+    }
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   document.body.append(layout.render());
   layout.addSection(textarea);
   layout.addSection(keyboard.render());
 });
 document.addEventListener('keydown', (event) => {
-  toggleActiveState(event);
+  toggleActiveStateByKey(event);
   changeLanguage(event, 'ShiftLeft', 'AltLeft');
 });
 document.addEventListener('keyup', (event) => {
-  toggleActiveState(event);
+  toggleActiveStateByKey(event);
   pressed.delete(event.code);
+});
+document.addEventListener('mousedown', (event) => {
+  toggleActiveStateByMouse(event);
+});
+document.addEventListener('mouseup', (event) => {
+  toggleActiveStateByMouse(event);
+});
+document.addEventListener('mouseout', (event) => {
+  toggleActiveStateByMouse(event);
 });
