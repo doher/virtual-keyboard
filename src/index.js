@@ -12,7 +12,7 @@ const footer = document.createElement('footer');
 header.innerHTML = '<h1>Virtual Keyboard<h1>';
 footer.innerHTML = `
   <p>Клавиатура создана в операционной системе Windows</p>
-  <p>Для переключения языка комбинация: ctrl + alt</p>
+  <p>Для переключения языка комбинация: shift + alt</p>
 `;
 
 textarea.classList.add('textarea');
