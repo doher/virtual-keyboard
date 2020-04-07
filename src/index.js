@@ -6,6 +6,14 @@ const layout = new Layout();
 const keyboard = new Keyboard();
 const textarea = document.createElement('textarea');
 const pressed = new Set();
+const header = document.createElement('header');
+const footer = document.createElement('footer');
+
+header.innerHTML = '<h1>Virtual Keyboard<h1>';
+footer.innerHTML = `
+  <p>Клавиатура создана в операционной системе Windows</p>
+  <p>Для переключения языка комбинация: ctrl + alt</p>
+`;
 
 textarea.classList.add('textarea');
 keyboard.language = localStorage.getItem('language') || 'en';
@@ -18,6 +26,25 @@ function typeText(button) {
   textarea.value = text.join('');
   textarea.selectionStart = position + 1;
   textarea.selectionEnd = position + 1;
+}
+
+function typeArrow(button) {
+  const position = textarea.selectionStart;
+
+  switch (button) {
+    case '←':
+      textarea.selectionStart = position - 1;
+      textarea.selectionEnd = position - 1;
+      break;
+
+    case '→':
+      textarea.selectionStart = position + 1;
+      textarea.selectionEnd = position + 1;
+      break;
+
+    default:
+      break;
+  }
 }
 
 function deleteText(button) {
@@ -76,6 +103,11 @@ function pressButton(button) {
 
     case 'tab':
       typeText('\t');
+      break;
+
+    case '←':
+    case '→':
+      typeArrow(button);
       break;
 
     default:
@@ -232,8 +264,10 @@ function toggleActiveStateByMouse(event) {
 
 document.addEventListener('DOMContentLoaded', () => {
   document.body.append(layout.render());
+  layout.addSection(header);
   layout.addSection(textarea);
   layout.addSection(keyboard.render());
+  layout.addSection(footer);
 });
 document.addEventListener('keydown', (event) => {
   toggleActiveStateByKey(event);
@@ -252,3 +286,7 @@ document.addEventListener('mouseup', (event) => {
 document.addEventListener('mouseout', (event) => {
   toggleActiveStateByMouse(event);
 });
+
+window.onfocus = () => {
+  document.querySelectorAll('.button').forEach((btn) => (btn.classList.remove('active')));
+};
