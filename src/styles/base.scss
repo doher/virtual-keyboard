@@ -1,6 +1,10 @@
 * {
-  box-sizing: border-box;
+  box-sizing : border-box;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+h1, p {
+  text-align: center;
 }
 
 span {
@@ -49,6 +53,7 @@ span {
 
 .button.active {
   background-color: rgb(85, 113, 238);
+  border-radius: 50%;
 }
 
 .Backspace,
@@ -95,4 +100,8 @@ span {
 .ControlLeft,
 .ControlRight {
   width: 60px;
+}
+
+.button {
+  transition: all 0.12s ease-in-out;
 }
